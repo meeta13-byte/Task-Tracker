@@ -2,7 +2,7 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ main, feature/* ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -27,13 +27,12 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
-
-      - name: Make gradlew executable
-        run: chmod +x android/gradlew
+        with:
+          gradle-version: '8.5'
 
       - name: Build Debug APK
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon
+        run: gradle assembleDebug --no-daemon
 
       - name: Upload APK as Workflow Artifact
         uses: actions/upload-artifact@v4
@@ -48,7 +47,7 @@ jobs:
         with:
           tag_name: v1.0.0
           name: "Task Tracker Android Widget v1.0"
-          body: "Download and install `TaskTracker-widget.apk` directly on your Samsung phone to add the GitHub-style home screen widget!"
+          body: "Download and install `app-debug.apk` directly on your Samsung phone to add the GitHub-style home screen widget!"
           files: android/app/build/outputs/apk/debug/app-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
