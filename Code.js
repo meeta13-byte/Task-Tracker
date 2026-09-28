@@ -1,7 +1,7 @@
 /**
  * -------------------------------------------------------------
- * BULLETPROOF HABIT TRACKER: EXACT GITHUB COLORS & INSTANT LOGS
- * (Version 3: Fixed GitHub percentile colors and native onEdit)
+ * HABIT TRACKER: LATEST TIMESTAMP ONLY (NO DUPLICATE LOGS)
+ * (Version 4: Upsert latest timestamp per task, ignore unchecks)
  * -------------------------------------------------------------
  */
 
@@ -18,12 +18,12 @@ function onOpen() {
     .addItem("1. Re-Build / Reset Tracker Matrix", "setupTaskMatrix")
     .addSeparator()
     .addItem("2. Sync Today's Tasks to Google Calendar", "syncTodayToCalendar")
-    .addItem("3. Clear Duplicate Logs in Activity Log", "cleanDuplicateLogs")
+    .addItem("3. Reset / Clean Activity Log", "resetActivityLog")
     .addToUi();
 }
 
 /**
- * BUILDS MATRIX WITH FIXED GITHUB COLOR TIERS & TODAY HIGHLIGHT
+ * BUILDS MATRIX WITH EXACT GITHUB COLOR TIERS & TODAY HIGHLIGHT
  */
 function setupTaskMatrix() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -86,7 +86,7 @@ function setupTaskMatrix() {
   const heatmapRange = sheet.getRange(7, CONFIG.START_DATE_COL, 1, CONFIG.NUM_DAYS);
   heatmapRange.setNumberFormat(";;;");
 
-  // GitHub Green Tiers
+  // GitHub 4-tier exact green colors
   const rules = [
     SpreadsheetApp.newConditionalFormatRule().whenNumberEqualTo(3).setBackground("#216e39").setRanges([heatmapRange]).build(),
     SpreadsheetApp.newConditionalFormatRule().whenNumberEqualTo(2).setBackground("#40c463").setRanges([heatmapRange]).build(),
@@ -96,22 +96,13 @@ function setupTaskMatrix() {
   sheet.setConditionalFormatRules(rules);
 
   // 2. Setup Activity Log Sheet
-  let logSheet = ss.getSheetByName(CONFIG.LOGS_SHEET);
-  if (!logSheet) logSheet = ss.insertSheet(CONFIG.LOGS_SHEET);
-  if (logSheet.getLastRow() === 0) {
-    logSheet.getRange("A1:D1").setValues([["Date Column", "Task Name", "Status", "Timestamp"]]);
-    logSheet.getRange("A1:D1").setBackground("#1f2937").setFontColor("#ffffff").setFontWeight("bold");
-    logSheet.setColumnWidth(1, 140);
-    logSheet.setColumnWidth(2, 180);
-    logSheet.setColumnWidth(3, 100);
-    logSheet.setColumnWidth(4, 200);
-  }
+  resetActivityLog();
 
-  SpreadsheetApp.getUi().alert("✅ Ready! Duplicates blocked.");
+  SpreadsheetApp.getUi().alert("✅ Tracker initialized! Only the latest check time will be stored.");
 }
 
 /**
- * AUTOMATIC onEdit: Tracks timestamps and strictly blocks duplicate logging
+ * AUTOMATIC onEdit: Overwrites with the latest check time only
  */
 function onEdit(e) {
   if (!e || !e.range) return;
@@ -123,73 +114,86 @@ function onEdit(e) {
   const row = range.getRow();
   const col = range.getColumn();
   
+  // Valid task checkbox range (Rows 2 to 4, Column C onwards)
   if (row >= 2 && row <= 4 && col >= CONFIG.START_DATE_COL) {
     const val = range.getValue();
     const isChecked = (val === true || val === "TRUE");
     
-    const dateLabel = sheet.getRange(1, col).getValue();
+    const dateLabel = sheet.getRange(1, col).getValue().toString().replace(" 📍", "");
     const taskName = sheet.getRange(row, 1).getValue();
     const logSheet = sheet.getParent().getSheetByName(CONFIG.LOGS_SHEET);
     const now = new Date();
     const timeString = Utilities.formatDate(now, Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm:ss");
     
     if (isChecked) {
+      // 1. Update hover note to latest check time
       range.setNote(`✅ Done at:\n${timeString}`);
-      writeLogDeduplicated(logSheet, dateLabel, taskName, "Completed", timeString);
+      // 2. Overwrite or insert into Activity Log
+      upsertLatestLog(logSheet, dateLabel, taskName, timeString);
     } else {
+      // 1. Clear note on uncheck
       range.clearNote();
-      writeLogDeduplicated(logSheet, dateLabel, taskName, "Unchecked", timeString);
+      // 2. Remove entry from Activity Log if unchecked
+      removeUncheckedLog(logSheet, dateLabel, taskName);
     }
   }
 }
 
 /**
- * Guard function: prevents identical log writes within 2 seconds
+ * Updates existing row if task was already logged, otherwise appends.
+ * Result: Exactly ONE row per task per date, holding the latest timestamp!
  */
-function writeLogDeduplicated(logSheet, dateLabel, taskName, status, timeString) {
+function upsertLatestLog(logSheet, dateLabel, taskName, timeString) {
   if (!logSheet) return;
   const lastRow = logSheet.getLastRow();
   
   if (lastRow > 1) {
-    const lastRowData = logSheet.getRange(lastRow, 1, 1, 4).getValues()[0];
-    const prevTask = lastRowData[1];
-    const prevStatus = lastRowData[2];
-    const prevTime = lastRowData[3];
-    
-    // If exact same task, status and logged within same timestamp, skip!
-    if (prevTask === taskName && prevStatus === status && prevTime === timeString) {
-      return; 
+    const data = logSheet.getRange(2, 1, lastRow - 1, 2).getValues();
+    for (let i = 0; i < data.length; i++) {
+      if (data[i][0] === dateLabel && data[i][1] === taskName) {
+        // Found existing entry -> OVERWRITE with latest time
+        logSheet.getRange(i + 2, 3, 1, 2).setValues([["Completed", timeString]]);
+        return;
+      }
     }
   }
-  logSheet.appendRow([dateLabel, taskName, status, timeString]);
+  
+  // Not found -> append new entry
+  logSheet.appendRow([dateLabel, taskName, "Completed", timeString]);
 }
 
 /**
- * One-click cleaner to remove duplicate rows from Activity Log
+ * Removes the row if user unchecks the box
  */
-function cleanDuplicateLogs() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const logSheet = ss.getSheetByName(CONFIG.LOGS_SHEET);
-  if (!logSheet || logSheet.getLastRow() <= 2) return;
+function removeUncheckedLog(logSheet, dateLabel, taskName) {
+  if (!logSheet) return;
+  const lastRow = logSheet.getLastRow();
+  if (lastRow <= 1) return;
   
-  const data = logSheet.getRange(2, 1, logSheet.getLastRow() - 1, 4).getValues();
-  const uniqueRows = [];
-  const seen = new Set();
-  
-  data.forEach(row => {
-    const key = `${row[0]}_${row[1]}_${row[2]}_${row[3]}`;
-    if (!seen.has(key)) {
-      seen.add(key);
-      uniqueRows.push(row);
+  const data = logSheet.getRange(2, 1, lastRow - 1, 2).getValues();
+  for (let i = 0; i < data.length; i++) {
+    if (data[i][0] === dateLabel && data[i][1] === taskName) {
+      logSheet.deleteRow(i + 2);
+      return;
     }
-  });
-  
-  // Clear and rewrite clean rows
-  logSheet.getRange(2, 1, logSheet.getLastRow() - 1, 4).clearContent();
-  if (uniqueRows.length > 0) {
-    logSheet.getRange(2, 1, uniqueRows.length, 4).setValues(uniqueRows);
   }
-  SpreadsheetApp.getUi().alert("🧹 Cleaned up all duplicate rows from Activity Log!");
+}
+
+/**
+ * Clears and resets the Activity Log tab headers
+ */
+function resetActivityLog() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let logSheet = ss.getSheetByName(CONFIG.LOGS_SHEET);
+  if (!logSheet) logSheet = ss.insertSheet(CONFIG.LOGS_SHEET);
+  
+  logSheet.clear();
+  logSheet.getRange("A1:D1").setValues([["Date Column", "Task Name", "Status", "Last Checked At"]]);
+  logSheet.getRange("A1:D1").setBackground("#1f2937").setFontColor("#ffffff").setFontWeight("bold");
+  logSheet.setColumnWidth(1, 140);
+  logSheet.setColumnWidth(2, 180);
+  logSheet.setColumnWidth(3, 100);
+  logSheet.setColumnWidth(4, 200);
 }
 
 function syncTodayToCalendar() {
