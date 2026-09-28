@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Task Tracker</string>
+    <string name="widget_description">Displays your habit consistency and GitHub-style green contribution grid.</string>
+</resources>

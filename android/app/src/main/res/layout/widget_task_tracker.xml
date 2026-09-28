@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <!-- Top Header Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Habits"
+            android:textColor="@color/github_white"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_streak"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/github_streak"
+            android:paddingStart="6dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="6dp"
+            android:paddingBottom="2dp"
+            android:text="🔥 0d"
+            android:textColor="@color/github_white"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/btn_refresh"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="8dp"
+            android:src="@android:drawable/ic_menu_rotate"
+            android:contentDescription="Refresh" />
+    </LinearLayout>
+
+    <!-- Subtitle / Today's Count -->
+    <TextView
+        android:id="@+id/tv_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="8dp"
+        android:text="Today: 0/3 Done"
+        android:textColor="@color/github_text"
+        android:textSize="11sp" />
+
+    <!-- 7 rows of 4 columns (28 squares) GitHub Heatmap Matrix -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <!-- Row 0 (Mon) -->
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="3dp">
+            <ImageView android:id="@+id/sq_0" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_1" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_2" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_3" android:layout_width="14dp" android:layout_height="14dp" android:background="@drawable/square_bg" />
+        </LinearLayout>
+
+        <!-- Row 1 (Tue) -->
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="3dp">
+            <ImageView android:id="@+id/sq_4" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_5" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_6" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_7" android:layout_width="14dp" android:layout_height="14dp" android:background="@drawable/square_bg" />
+        </LinearLayout>
+
+        <!-- Row 2 (Wed) -->
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="3dp">
+            <ImageView android:id="@+id/sq_8" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_9" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_10" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_11" android:layout_width="14dp" android:layout_height="14dp" android:background="@drawable/square_bg" />
+        </LinearLayout>
+
+        <!-- Row 3 (Thu) -->
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="3dp">
+            <ImageView android:id="@+id/sq_12" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_13" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_14" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_15" android:layout_width="14dp" android:layout_height="14dp" android:background="@drawable/square_bg" />
+        </LinearLayout>
+
+        <!-- Row 4 (Fri) -->
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="3dp">
+            <ImageView android:id="@+id/sq_16" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_17" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_18" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_19" android:layout_width="14dp" android:layout_height="14dp" android:background="@drawable/square_bg" />
+        </LinearLayout>
+
+        <!-- Row 5 (Sat) -->
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="3dp">
+            <ImageView android:id="@+id/sq_20" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_21" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_22" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_23" android:layout_width="14dp" android:layout_height="14dp" android:background="@drawable/square_bg" />
+        </LinearLayout>
+
+        <!-- Row 6 (Sun) -->
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+            <ImageView android:id="@+id/sq_24" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_25" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_26" android:layout_width="14dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="@drawable/square_bg" />
+            <ImageView android:id="@+id/sq_27" android:layout_width="14dp" android:layout_height="14dp" android:background="@drawable/square_bg" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
