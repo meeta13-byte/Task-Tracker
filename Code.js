@@ -22,14 +22,11 @@ function onOpen() {
 }
 
 /**
- * SERVES THE MOBILE WEB APP (Looks exactly like GitHub on iPhone)
+ * SERVES THE MOBILE WEB APP (Fixed: meta tags placed inside HTML)
  */
 function doGet() {
   return HtmlService.createHtmlOutput(getMobileAppHtml())
     .setTitle("Habit Tracker")
-    .addMetaTag("viewport", "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no")
-    .addMetaTag("apple-mobile-web-app-capable", "yes")
-    .addMetaTag("apple-mobile-web-app-status-bar-style", "black-translucent")
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
@@ -302,8 +299,10 @@ function getMobileAppHtml() {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Task Tracker</title>
+  <title>Habit Tracker</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
     body { background-color: #0d1117; color: #c9d1d9; padding: 16px; min-height: 100vh; }
