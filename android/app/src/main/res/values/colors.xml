@@ -1,0 +1,15 @@
+<resources>
+    <color name="github_dark_bg">#0d1117</color>
+    <color name="github_card_bg">#161b22</color>
+    <color name="github_border">#30363d</color>
+    <color name="github_text">#c9d1d9</color>
+    <color name="github_white">#f0f6fc</color>
+    <color name="github_blue">#58a6ff</color>
+    <color name="github_streak">#238636</color>
+    
+    <!-- GitHub 4-tier Contribution Colors -->
+    <color name="github_lvl_0">#161b22</color>
+    <color name="github_lvl_1">#0e4429</color>
+    <color name="github_lvl_2">#006d32</color>
+    <color name="github_lvl_3">#39d353</color>
+</resources>

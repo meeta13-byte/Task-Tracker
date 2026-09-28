@@ -22,9 +22,15 @@ function onOpen() {
 }
 
 /**
- * SERVES THE MOBILE WEB APP (Fixed: meta tags placed inside HTML)
+ * SERVES THE MOBILE WEB APP & JSON API FOR ANDROID WIDGET
  */
-function doGet() {
+function doGet(e) {
+  // Return JSON for native Android Widget
+  if (e && e.parameter && (e.parameter.format === "json" || e.parameter.api === "data")) {
+    return ContentService.createTextOutput(JSON.stringify(getMobileData()))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
   return HtmlService.createHtmlOutput(getMobileAppHtml())
     .setTitle("Habit Tracker")
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
@@ -254,11 +260,26 @@ function syncTodayToCalendar() {
 
   const calendar = CalendarApp.getDefaultCalendar();
   const today = new Date();
+
+  // 1. Delete previous habit events for today to avoid duplicate entries!
+  const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
+  const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
+  const existingEvents = calendar.getEvents(startOfDay, endOfDay);
+  existingEvents.forEach(ev => {
+    const title = ev.getTitle();
+    if (title.startsWith("[Habit]") || title.startsWith("[Task]")) {
+      ev.deleteEvent();
+    }
+  });
+
   const taskData = sheet.getRange(2, 1, 3, 2).getValues();
   let count = 0;
 
   taskData.forEach(([taskName, timeStr]) => {
-    if (!taskName) return;
+    if (!taskName || taskName.toString().trim() === "") return;
+
+    // Explicitly exclude any "office" tasks from syncing
+    if (taskName.toString().toLowerCase().includes("office")) return;
     
     let startTime = new Date(today);
     if (typeof timeStr === "string" && timeStr.includes(":")) {
@@ -278,7 +299,7 @@ function syncTodayToCalendar() {
     count++;
   });
 
-  SpreadsheetApp.getUi().alert(`📅 Synced ${count} tasks to Google Calendar!`);
+  SpreadsheetApp.getUi().alert(`📅 Synced ${count} tasks to Google Calendar (duplicates cleared, office excluded)!`);
 }
 
 function getColumnLetter(colIndex) {
