@@ -1,6 +1,6 @@
 # Setup & Usage Instructions
 
-This guide walks you through setting up and using the **Habit & Task Tracker** in Google Sheets with automatic Google Calendar phone alerts, real-time timestamping, and a dedicated **mobile GitHub green dot Web App** on your iPhone.
+This guide walks you through setting up and using the **Habit & Task Tracker** in Google Sheets with automatic Google Calendar phone alerts, real-time timestamping, and a dedicated **native Samsung Android home screen widget** featuring GitHub-style green contribution dots.
 
 ---
 
@@ -8,11 +8,11 @@ This guide walks you through setting up and using the **Habit & Task Tracker** i
 * A Google Account.
 * Access to your Google Sheet: [Task Tracker Sheet](https://docs.google.com/spreadsheets/d/1mViYNLdfI6GD93Og4KLQKN9YmXx3Gm8nXGuamfCPNuo/edit).
 * Google Calendar app installed on your phone.
-* Safari on iPhone and Mac.
+* Samsung Galaxy Phone (Android) & Mac with Safari.
 
 ---
 
-## 🚀 Step 1: Install the Script into Google Sheets
+## 🚀 Step 1: Install / Update the Script in Google Sheets
 
 1. Open your Google Sheet in your web browser.
 2. In the top navigation bar, click **Extensions** > **Apps Script**.
@@ -33,50 +33,58 @@ This guide walks you through setting up and using the **Habit & Task Tracker** i
 
 ---
 
-## 📱 Step 3: Deploy the Mobile GitHub App (For iPhone Safari)
+## 📱 Step 3: Deploy the Web App & JSON API
 
-To get an authentic GitHub dark-mode interface with real green squares directly on your iPhone home screen:
+To allow the native Android widget to read your live scores and streak:
 
 1. In the **Apps Script** editor, click the blue **Deploy** button (top right) > **New deployment**.
 2. Click the gear icon (**⚙️**) next to "Select type" and choose **Web app**.
 3. Set the following fields:
-   * **Description**: `Mobile Task Tracker`
+   * **Description**: `Task Tracker API & Web App`
    * **Execute as**: `Me`
-   * **Who has access**: `Anyone` (or `Only myself`)
+   * **Who has access**: `Anyone`
 4. Click **Deploy**.
-5. Copy the **Web App URL** shown under "Web app" (it will look like `https://script.google.com/macros/s/.../exec`).
-
-### Add it to your iPhone Home Screen:
-1. Send that Web App URL to your iPhone (via AirDrop, Messages, or WhatsApp) and open it in **Safari**.
-2. You will see a dark-mode GitHub profile card with your tasks, streak, and green squares!
-3. Tap the **Share** button in Safari (square with an up arrow 📤 at the bottom).
-4. Tap **Add to Home Screen**.
-5. Name it `Habits` and tap **Add**.
-
-*Now, tapping that icon on your phone opens an authentic GitHub tracker app. Tapping any task checks it off in real-time and logs the timestamp in your Google Sheet!*
+5. Copy the **Web App URL** shown under "Web app" (ends with `/exec`).
 
 ---
 
-## 📅 Step 4: Sync Daily Tasks to Google Calendar (Phone Alerts)
+## 📲 Step 4: Install the Native Widget on your Samsung Phone
 
-Whenever you want today's tasks scheduled on your phone:
-1. In the Google Sheet, click **🚀 Habit Tracker** > **2. Sync Today's Tasks to Google Calendar** (or tap the **Sync with Google Calendar** button right inside your mobile app!).
-2. It will schedule `Gate (4 hours)` at `10:00`, `Leetcode (2 que)` at `18:00`, and `Github commit (5)` at `21:30` on your Google Calendar with a **10-minute popup alert** before each task.
+1. Go to the [Releases](https://github.com/meeta13-byte/Task-Tracker/releases) or [Actions Artifacts](https://github.com/meeta13-byte/Task-Tracker/actions) page in your GitHub repository.
+2. Download the `app-debug.apk` file directly onto your Samsung phone.
+3. Tap the downloaded file to install it (*enable "Install unknown apps" if prompted*).
+4. Open the installed **Task Tracker** app.
+5. Paste your **Google Apps Script Web App URL** from Step 3 and tap **Save & Sync Widget**.
+6. On your Samsung home screen:
+   * Long-press an empty area of your wallpaper.
+   * Tap **Widgets**.
+   * Find **Task Tracker**.
+   * Drag the **Habits (GitHub Heatmap)** widget onto your home screen!
 
 ---
 
-## 🎯 Step 5: Daily Workflow
+## 📅 Step 5: Sync Daily Tasks to Google Calendar (Phone Alerts)
+
+* Click **🚀 Habit Tracker** > **2. Sync Today's Tasks to Google Calendar**.
+* **Clean Calendar Sync**: Deletes any previously created habit events for today before syncing to guarantee **no duplicates**, and **filters out any "Office" tasks** so only your real study and habit goals are scheduled.
+* Tasks will alert you 10 minutes before their scheduled time.
+
+---
+
+## 🎯 Step 6: Daily Workflow
 
 ### Checking Off Tasks
-* **On Phone**: Tap any task card in the mobile app. It turns green with a checkmark, updates your sheet in real-time, and stamps your completion time!
-* **In Google Sheets**: Check the box for today's column (`📍`). Hover over the cell to see:
+* **In Google Sheets**: Check the box for today's column (`📍`).
+* **Hover Note**: The cell shows:
   ```
   ✅ Done at:
   2026-09-29 18:45:12
   ```
+* **Activity Log**: Automatically updates with your latest check time.
+* **Samsung Widget**: Tap the 🔄 refresh icon on your home screen widget to see your streak and green squares update instantly!
 
 ### GitHub Green Intensity
-* ⬜ **0 Tasks (0%)**: Empty Dark Gray
+* ⬜ **0 Tasks (0%)**: Empty Dark Gray (`#161b22`)
 * 🟩 **1 Task (33%)**: GitHub Light Green (`#0e4429`)
 * 🟩 **2 Tasks (67%)**: GitHub Medium Green (`#006d32`)
 * 🟩 **3 Tasks (100%)**: Vibrant GitHub Green (`#39d353`)
